@@ -1,0 +1,36 @@
+---
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-executables-have-shebangs
+      - id: check-symlinks
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args:
+          - "--fix=lf"
+      - id: trailing-whitespace
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.4
+    hooks:
+      - id: codespell
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.2
+    hooks:
+      - id: shellcheck
+        args:
+          - "--severity=info"
+
+  - repo: local
+    hooks:
+      - id: test-bashplate
+        name: test-bashplate
+        entry: bash -c './test_bashplate.sh'
+        language: system
+        types:
+          - shell
+        pass_filenames: false
