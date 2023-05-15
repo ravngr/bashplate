@@ -1,6 +1,13 @@
 #!/bin/bash
 # shellcheck disable=SC2034
 
+# bashplate variables
+BASHPLATE=true
+export BASHPLATE
+BASHPLATE_VERSION="v1.0.1"
+export BASHPLATE_VERSION
+
+
 ## Options
 # Exit on errors
 set -o errexit
