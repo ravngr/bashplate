@@ -4,7 +4,7 @@
 # bashplate variables
 BASHPLATE=true
 export BASHPLATE
-BASHPLATE_VERSION="v1.0.1"
+BASHPLATE_VERSION="v1.0.2"
 export BASHPLATE_VERSION
 
 
@@ -21,11 +21,11 @@ set -o pipefail
 
 ## Globals
 # Terminal escape characters
-TERM_CLR_ESC='\033['
-TERM_CLR_ESC_TERM='m'
+_TERM_ESC='\033['
+_TERM_ESC_TERM='m'
 
 # Terminal colour/style codes
-TERM_RESET="${TERM_CLR_ESC}0${TERM_CLR_ESC_TERM}"
+TERM_RESET="${_TERM_ESC}0${_TERM_ESC_TERM}"
 
 TERM_STYLE_BOLD=1
 TERM_STYLE_BRIGHT=2
@@ -66,7 +66,7 @@ print_style() {
     if [[ $TERM == "xterm"* || $TERM == "screen"* ]]; then
         until [ -z "${2:-}" ]; do
             # Prefix control codes
-            result="${TERM_CLR_ESC}${2}${TERM_CLR_ESC_TERM}${result}"
+            result="${_TERM_ESC}${2}${_TERM_ESC_TERM}${result}"
             shift || break
         done
 
@@ -107,14 +107,12 @@ _get_prefix() {
 }
 
 print_debug() {
-    if [ -z "${TERM_DEBUG:-}" ]; then
-        return
+    if [[ -n "${TERM_DEBUG:-}" || -n "${CI:-}" ]]; then
+        local prefix
+        prefix="$(_get_datetime) [D] $(_get_prefix)"
+        prefix=$(print_style "${prefix}" "${style_debug[@]}")
+        echo -e "${prefix} $*"
     fi
-
-    local prefix
-    prefix="$(_get_datetime) [D] $(_get_prefix)"
-    prefix=$(print_style "${prefix}" "${style_debug[@]}")
-    echo -e "${prefix} $*"
 }
 
 print_info() {
