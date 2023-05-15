@@ -1,0 +1,46 @@
+---
+
+name: "bashplate CI"
+
+
+on:
+  push:
+    paths:
+      - "**.sh"
+      - ".github/workflows/ci.yaml"
+      - ".pre-commit-config.yaml"
+  pull_request:
+    paths:
+      - "**.sh"
+      - ".github/workflows/ci.yaml"
+      - ".pre-commit-config.yaml"
+  workflow_dispatch:
+
+
+jobs:
+  test:
+    name: "Run pre-commit tests"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout configuration"
+        uses: actions/checkout@v3
+
+      - name: "Setup Python"
+        uses: actions/setup-python@v4
+        with:
+          cache: 'pip'
+
+      - name: "Install Python tools"
+        run: |
+          pip install -r requirements.txt
+
+      - name: "Cache pre-commit environment"
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-3|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - name: "Run pre-commit tests"
+        shell: bash
+        run: |
+          pre-commit run --show-diff-on-failure --color=always
